@@ -27,4 +27,12 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const restaurant = (req, res, next) => {
+  if (req.user && (req.user.is_restaurant || req.user.is_admin)) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized as a restaurant provider' });
+  }
+};
+
+module.exports = { protect, admin, restaurant };

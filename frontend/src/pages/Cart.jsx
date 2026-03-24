@@ -1,17 +1,26 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiTrash2, FiArrowRight } from 'react-icons/fi';
 import { CartContext } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
 import LocationMap from '../components/LocationMap';
 
 const Cart = () => {
   const { cart, removeFromCart, cartTotal, clearCart, updateQty } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [deliveryLocation, setDeliveryLocation] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [mpesaStatus, setMpesaStatus] = React.useState(null);
 
   const handleCheckout = async () => {
+    if (!user) {
+      alert("Please log in to submit your order.");
+      navigate('/login');
+      return;
+    }
+
     if (!deliveryLocation || !phoneNumber) {
       alert("Please provide both delivery location and M-Pesa phone number.");
       return;
@@ -43,8 +52,8 @@ const Cart = () => {
         setTimeout(() => {
           clearCart();
           setMpesaStatus(null);
-          // could redirect to dashboard
-        }, 6000);
+          navigate('/dashboard');
+        }, 4000);
       } else {
         alert(data.message || 'Failed to checkout');
       }
@@ -55,7 +64,8 @@ const Cart = () => {
       setTimeout(() => {
         clearCart();
         setMpesaStatus(null);
-      }, 6000);
+        navigate('/dashboard');
+      }, 4000);
     }
     setIsProcessing(false);
   };

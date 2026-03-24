@@ -38,17 +38,17 @@ INSERT INTO foods (name, description, price, image_url, category_id) VALUES
 
 -- Sides & Accompaniments
 ('Ugali', 'The staple firm maize flour porridge, perfect for stews.', 60, '', 3),
-('Sukuma Wiki', 'Collard greens sautéed with onions and tomatoes.', 80, '', 3),
+('Sukuma Wiki', 'Collard greens sautéed with onions and tomatoes.', 50, '', 3),
 ('Chapati', 'Soft, layered, pan-fried flatbread.', 50, '', 3),
 ('Kachumbari', 'Fresh tomato, onion, and cilantro salsa.', 60, '', 3),
 ('Maharagwe', 'Red kidney beans stewed in a rich, savory coconut sauce.', 150, '', 3),
 ('Wali wa Nazi', 'Fragrant rice simmered gently in coconut milk.', 100, '', 3),
 ('Nduma', 'Boiled arrowroot, a healthy and filling traditional side.', 80, '', 3),
 ('Ngwaci', 'Boiled sweet potatoes, popular for breakfast with tea.', 80, '', 3),
-('Mrenda', 'Jute mallow greens, famously slippery and nutritious.', 80, '', 3),
+('Mrenda', 'Jute mallow greens, famously slippery and nutritious.', 50, '', 3),
 ('Mbaazi za Nazi', 'Pigeon peas cooked in thick coconut cream.', 100, '', 3),
 
 -- Beverages
-('Kenyan Tea (Chai)', 'Rich, sweet milk tea brewed with high-quality Kenyan tea leaves.', 80, '', 4),
-('Uji', 'Traditional fermented millet or maize porridge, warming and nutritious.', 80, '', 4),
+('Kenyan Tea (Chai)', 'Rich, sweet milk tea brewed with high-quality Kenyan tea leaves.', 50, '', 4),
+('Uji', 'Traditional fermented millet or maize porridge, warming and nutritious.', 70, '', 4),
 ('Madafu', 'Fresh, natural coconut water served straight from the shell.', 80, '', 4);

@@ -12,26 +12,40 @@ const dummyData = [
 
 const Menu = () => {
   const [foods, setFoods] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
   const { addToCart, cart } = useContext(CartContext);
 
   useEffect(() => {
     // Attempt fetch from backend, fallback to dummyData on error
-    fetch('http://localhost:5000/api/foods')
-      .then(res => {
-        if (!res.ok) throw new Error('Network response not ok');
+    Promise.all([
+      fetch('http://localhost:5000/api/foods').then(res => {
+        if (!res.ok) throw new Error('Foods fetch failed');
+        return res.json();
+      }),
+      fetch('http://localhost:5000/api/foods/categories/all').then(res => {
+        if (!res.ok) throw new Error('Categories fetch failed');
         return res.json();
       })
-      .then(data => {
-        setFoods(data.length > 0 ? data : dummyData);
+    ])
+      .then(([foodsData, categoriesData]) => {
+        setFoods(foodsData.length > 0 ? foodsData : dummyData);
+        setCategories(categoriesData);
         setLoading(false);
       })
       .catch(err => {
         console.warn('Backend not accessible, using fallback dummy data:', err);
         setFoods(dummyData);
+        const dummyCategories = [...new Set(dummyData.map(f => f.category_name))].map((name, i) => ({ id: i + 1, name }));
+        setCategories(dummyCategories);
         setLoading(false);
       });
   }, []);
+
+  const filteredFoods = selectedCategory === 'All' 
+    ? foods 
+    : foods.filter(food => food.category_name === selectedCategory);
 
   const handleAddToCart = (food) => {
     addToCart(food);
@@ -46,8 +60,28 @@ const Menu = () => {
         <p style={{ color: 'var(--text-muted)' }}>Handcrafted perfection in every bite.</p>
       </div>
 
+      <div className="category-filter" style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '40px', flexWrap: 'wrap' }}>
+        <button 
+          className={`btn ${selectedCategory === 'All' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setSelectedCategory('All')}
+          style={{ padding: '8px 20px', borderRadius: '25px', textTransform: 'capitalize' }}
+        >
+          All
+        </button>
+        {categories.map(cat => (
+          <button 
+            key={cat.id} 
+            className={`btn ${selectedCategory === cat.name ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setSelectedCategory(cat.name)}
+            style={{ padding: '8px 20px', borderRadius: '25px', textTransform: 'capitalize' }}
+          >
+            {cat.name}
+          </button>
+        ))}
+      </div>
+
       <div className="menu-grid">
-        {foods.map(food => {
+        {filteredFoods.map(food => {
           const inCart = cart.find(item => item.id === food.id);
           
           return (
@@ -56,6 +90,11 @@ const Menu = () => {
                 <img src={food.image_url} alt={food.name} className="food-img" />
               </div>
               <h3 className="food-title">{food.name}</h3>
+              {food.restaurant_name && (
+                <div style={{ fontSize: '0.8rem', color: 'var(--primary-color)', marginBottom: '8px', fontWeight: 'bold' }}>
+                  👨‍🍳 By {food.restaurant_name}
+                </div>
+              )}
               <p className="food-desc">{food.description}</p>
               
               <div className="food-footer">
