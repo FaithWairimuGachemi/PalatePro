@@ -32,6 +32,71 @@ router.get('/categories/all', async (req, res) => {
   }
 });
 
+// Helper for bestsellers
+const getBestsellers = async () => {
+  const [bestsellers] = await db.query(`
+    SELECT f.*, categories.name as category_name, users.name as restaurant_name, SUM(oi.quantity) as total_ordered
+    FROM foods f
+    JOIN order_items oi ON f.id = oi.food_id
+    LEFT JOIN categories ON f.category_id = categories.id
+    LEFT JOIN users ON f.restaurant_id = users.id
+    WHERE f.is_available = 1
+    GROUP BY f.id
+    ORDER BY total_ordered DESC
+    LIMIT 4
+  `);
+  if (bestsellers.length > 0) return bestsellers;
+  const [randomFoods] = await db.query('SELECT f.*, categories.name as category_name, users.name as restaurant_name FROM foods f LEFT JOIN categories ON f.category_id = categories.id LEFT JOIN users ON f.restaurant_id = users.id WHERE f.is_available = 1 LIMIT 4');
+  return randomFoods;
+};
+
+// @route GET /api/foods/bestsellers
+// @desc Get top 4 trending items globally
+router.get('/bestsellers', async (req, res) => {
+  try {
+    const bestsellers = await getBestsellers();
+    res.json(bestsellers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching bestsellers' });
+  }
+});
+
+// @route GET /api/foods/recommended
+// @desc Get recommended items based on user preferences
+router.get('/recommended', protect, async (req, res) => {
+  try {
+    const prefs = req.user.preferences;
+    if (!prefs) return res.json(await getBestsellers());
+
+    let categoryIds = [];
+    try {
+      categoryIds = typeof prefs === 'string' ? JSON.parse(prefs) : prefs;
+    } catch(e) { }
+
+    if (!Array.isArray(categoryIds) || categoryIds.length === 0) {
+       return res.json(await getBestsellers());
+    }
+
+    const placeholders = categoryIds.map(() => '?').join(',');
+    const [recommended] = await db.query(`
+      SELECT f.*, categories.name as category_name, users.name as restaurant_name 
+      FROM foods f 
+      LEFT JOIN categories ON f.category_id = categories.id
+      LEFT JOIN users ON f.restaurant_id = users.id 
+      WHERE f.category_id IN (${placeholders}) AND f.is_available = 1
+      ORDER BY RAND()
+      LIMIT 4
+    `, categoryIds);
+
+    if (recommended.length === 0) return res.json(await getBestsellers());
+    res.json(recommended);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching recommendations' });
+  }
+});
+
 // @route GET /api/foods/provider
 // @desc Get all foods for a specific restaurant provider
 router.get('/provider', protect, restaurant, async (req, res) => {

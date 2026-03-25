@@ -5,15 +5,15 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 
 // Generate JWT
-const generateToken = (id, is_admin, is_restaurant) => {
-  return jwt.sign({ id, is_admin, is_restaurant }, process.env.JWT_SECRET, {
+const generateToken = (id, is_admin, is_restaurant, preferences) => {
+  return jwt.sign({ id, is_admin, is_restaurant, preferences }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
 
 // @route POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { name, email, phone, password, is_restaurant } = req.body;
+  const { name, email, phone, password, is_restaurant, preferences } = req.body;
 
   if (!phone || !password || !name || !email) {
     return res.status(400).json({ message: 'Please provide all required fields' });
@@ -32,10 +32,11 @@ router.post('/register', async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
+    const stringifiedPrefs = preferences ? JSON.stringify(preferences) : null;
 
     const [result] = await db.execute(
-      'INSERT INTO users (name, email, phone, password_hash, is_restaurant) VALUES (?, ?, ?, ?, ?)',
-      [name, email, phone, password_hash, is_restaurant ? 1 : 0]
+      'INSERT INTO users (name, email, phone, password_hash, is_restaurant, preferences) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, email, phone, password_hash, is_restaurant ? 1 : 0, stringifiedPrefs]
     );
 
     res.status(201).json({
@@ -45,7 +46,8 @@ router.post('/register', async (req, res) => {
       phone,
       is_admin: 0,
       is_restaurant: is_restaurant ? 1 : 0,
-      token: generateToken(result.insertId, 0, is_restaurant ? 1 : 0),
+      preferences: stringifiedPrefs,
+      token: generateToken(result.insertId, 0, is_restaurant ? 1 : 0, stringifiedPrefs),
     });
   } catch (error) {
     console.error(error);
@@ -78,7 +80,8 @@ router.post('/login', async (req, res) => {
         phone: user.phone,
         is_admin: user.is_admin,
         is_restaurant: user.is_restaurant,
-        token: generateToken(user.id, user.is_admin, user.is_restaurant),
+        preferences: user.preferences,
+        token: generateToken(user.id, user.is_admin, user.is_restaurant, user.preferences),
       });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });

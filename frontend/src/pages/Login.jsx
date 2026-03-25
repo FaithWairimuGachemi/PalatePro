@@ -4,7 +4,16 @@ import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', is_restaurant: false });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', is_restaurant: false, preferences: [] });
+
+  const handleCheckboxChange = (categoryId) => {
+    setFormData(prev => {
+      const prefs = prev.preferences.includes(categoryId) 
+        ? prev.preferences.filter(id => id !== categoryId) 
+        : [...prev.preferences, categoryId];
+      return { ...prev, preferences: prefs };
+    });
+  };
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -75,6 +84,23 @@ const Login = () => {
                 />
                 <label style={{ margin: 0 }}>Register as a Restaurant Provider</label>
               </div>
+
+              {!formData.is_restaurant && (
+                <div className="form-group" style={{ marginTop: '20px' }}>
+                  <label>What are you craving? (Choose your favorites)</label>
+                  <div style={{ display: 'flex', gap: '15px', marginTop: '10px', flexWrap: 'wrap' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
+                      <input type="checkbox" checked={formData.preferences.includes(1)} onChange={() => handleCheckboxChange(1)} style={{ width: 'auto', margin: 0 }} /> 🍔 Burgers
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
+                      <input type="checkbox" checked={formData.preferences.includes(2)} onChange={() => handleCheckboxChange(2)} style={{ width: 'auto', margin: 0 }} /> 🍕 Pizzas
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
+                      <input type="checkbox" checked={formData.preferences.includes(3)} onChange={() => handleCheckboxChange(3)} style={{ width: 'auto', margin: 0 }} /> 🥤 Drinks
+                    </label>
+                  </div>
+                </div>
+              )}
             </>
           )}
           <div className="form-group">

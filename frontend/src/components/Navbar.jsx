@@ -10,7 +10,10 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="nav-brand">PalatePro</Link>
+      <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <img src="/palatepro_logo.png" alt="PalatePro Logo" style={{ height: '35px', borderRadius: '8px' }} />
+        <span>PalatePro</span>
+      </div>
       
       <div className="nav-links">
         <Link to="/">Home</Link>
