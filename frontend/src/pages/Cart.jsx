@@ -3,16 +3,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiTrash2, FiArrowRight } from 'react-icons/fi';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
-import LocationMap from '../components/LocationMap';
 
 const Cart = () => {
   const { cart, removeFromCart, cartTotal, clearCart, updateQty } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [deliveryLocation, setDeliveryLocation] = React.useState('');
-  const [phoneNumber, setPhoneNumber] = React.useState('');
+  const [deliveryPhone, setDeliveryPhone] = React.useState('');
+  const [mpesaNumber, setMpesaNumber] = React.useState('');
+  const [geoLoading, setGeoLoading] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [mpesaStatus, setMpesaStatus] = React.useState(null);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    setGeoLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setDeliveryLocation(`https://www.google.com/maps?q=${lat},${lng}`);
+        setGeoLoading(false);
+      },
+      (error) => {
+        console.error("Error asking for location", error);
+        alert("Could not get your location. Please type it manually.");
+        setGeoLoading(false);
+      }
+    );
+  };
 
   const handleCheckout = async () => {
     if (!user) {
@@ -21,8 +43,8 @@ const Cart = () => {
       return;
     }
 
-    if (!deliveryLocation || !phoneNumber) {
-      alert("Please provide both delivery location and M-Pesa phone number.");
+    if (!deliveryLocation || !deliveryPhone) {
+      alert("Please provide both a delivery location and a delivery contact number.");
       return;
     }
     
@@ -41,7 +63,8 @@ const Cart = () => {
           orderItems: cart,
           totalAmount: cartTotal + cartTotal * 0.08 + 250,
           deliveryLocation,
-          phoneNumber
+          deliveryPhone,
+          mpesaNumber
         })
       });
       
@@ -140,25 +163,40 @@ const Cart = () => {
             </div>
             
             <div style={{ marginTop: '25px', textAlign: 'left' }}>
-              <h4 style={{ marginBottom: '10px', color: 'var(--text-light)' }}>1. Pinpoint Exact Delivery Location</h4>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px' }}>Tap on the map to set your precise delivery coordinates</p>
+              <h4 style={{ marginBottom: '10px', color: 'var(--text-light)' }}>1. Delivery Location</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px' }}>Grab your exact GPS coordinates for the rider</p>
               
-              <LocationMap setDeliveryLocation={setDeliveryLocation} />
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                <button type="button" onClick={handleGetLocation} disabled={geoLoading} className="btn btn-outline" style={{ flex: 1, padding: '10px' }}>
+                  {geoLoading ? 'Locating...' : '📍 Use My Current Location'}
+                </button>
+              </div>
               
               <input 
                 type="text" 
-                placeholder="Or type exact location manually..." 
+                placeholder="Or type precise directions manually..." 
                 value={deliveryLocation}
                 onChange={(e) => setDeliveryLocation(e.target.value)}
                 style={{ width: '100%', marginBottom: '25px', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'white', outline: 'none' }}
               />
               
-              <h4 style={{ marginBottom: '10px', color: 'var(--text-light)' }}>2. M-Pesa Number</h4>
+              <h4 style={{ marginBottom: '10px', color: 'var(--text-light)' }}>2. Delivery Contact Number</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px' }}>For the rider to call when they arrive</p>
               <input 
                 type="text" 
                 placeholder="e.g. 0712345678" 
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={deliveryPhone}
+                onChange={(e) => setDeliveryPhone(e.target.value)}
+                style={{ width: '100%', marginBottom: '20px', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'white', outline: 'none' }}
+              />
+
+              <h4 style={{ marginBottom: '10px', color: 'var(--text-light)' }}>3. M-Pesa Payment Number</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px' }}>If paying via M-Pesa, enter your number</p>
+              <input 
+                type="text" 
+                placeholder="e.g. 0712345678" 
+                value={mpesaNumber}
+                onChange={(e) => setMpesaNumber(e.target.value)}
                 style={{ width: '100%', marginBottom: '20px', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'white', outline: 'none' }}
               />
             </div>

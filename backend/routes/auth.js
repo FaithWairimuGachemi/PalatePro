@@ -15,6 +15,10 @@ const generateToken = (id, is_admin, is_restaurant) => {
 router.post('/register', async (req, res) => {
   const { name, email, phone, password, is_restaurant } = req.body;
 
+  if (!phone || !password || !name || !email) {
+    return res.status(400).json({ message: 'Please provide all required fields' });
+  }
+
   try {
     const [rows] = await db.execute('SELECT * FROM users WHERE email = ? OR phone = ?', [email, phone]);
     if (rows.length > 0) {
@@ -52,6 +56,10 @@ router.post('/register', async (req, res) => {
 // @route POST /api/auth/login
 router.post('/login', async (req, res) => {
   const { phone, password } = req.body;
+
+  if (!phone || !password) {
+    return res.status(400).json({ message: 'Please provide both phone and password' });
+  }
 
   try {
     const [rows] = await db.execute('SELECT * FROM users WHERE phone = ?', [phone]);

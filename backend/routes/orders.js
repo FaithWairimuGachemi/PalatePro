@@ -6,7 +6,7 @@ const { protect, admin } = require('../middleware/authMiddleware');
 // @route POST /api/orders
 // @desc Create new order and trigger M-Pesa
 router.post('/', protect, async (req, res) => {
-  const { orderItems, totalAmount, deliveryLocation, phoneNumber } = req.body;
+  const { orderItems, totalAmount, deliveryLocation, deliveryPhone, mpesaNumber } = req.body;
 
   if (orderItems && orderItems.length === 0) {
     return res.status(400).json({ message: 'No order items' });
@@ -17,8 +17,8 @@ router.post('/', protect, async (req, res) => {
     await connection.beginTransaction();
 
     const [orderResult] = await connection.execute(
-      'INSERT INTO orders (user_id, total_amount, delivery_location, phone_number) VALUES (?, ?, ?, ?)',
-      [req.user.id, totalAmount, deliveryLocation || 'N/A', phoneNumber || null]
+      'INSERT INTO orders (user_id, total_amount, delivery_location, delivery_phone, phone_number) VALUES (?, ?, ?, ?, ?)',
+      [req.user.id, totalAmount, deliveryLocation || 'N/A', deliveryPhone || null, mpesaNumber || null]
     );
     const orderId = orderResult.insertId;
 
@@ -32,9 +32,9 @@ router.post('/', protect, async (req, res) => {
     await connection.commit();
     
     let mpesaResponse = null;
-    if (phoneNumber) {
+    if (mpesaNumber) {
       const mpesa = require('../utils/mpesa');
-      mpesaResponse = await mpesa.initiateSTKPush(phoneNumber, totalAmount, orderId);
+      mpesaResponse = await mpesa.initiateSTKPush(mpesaNumber, totalAmount, orderId);
     }
 
     res.status(201).json({ message: 'Order created', orderId, mpesaResponse });
@@ -59,7 +59,7 @@ router.get('/myorders', protect, async (req, res) => {
     // Fetch items for each order
     for (let order of orders) {
       const [items] = await db.query(
-        'SELECT oi.*, f.name, f.image_url FROM order_items oi JOIN foods f ON oi.food_id = f.id WHERE oi.order_id = ?',
+        'SELECT oi.*, f.name, f.image_url, f.is_available FROM order_items oi JOIN foods f ON oi.food_id = f.id WHERE oi.order_id = ?',
         [order.id]
       );
       order.items = items;

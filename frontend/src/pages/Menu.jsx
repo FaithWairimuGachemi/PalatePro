@@ -15,7 +15,7 @@ const Menu = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [loading, setLoading] = useState(true);
-  const { addToCart, cart } = useContext(CartContext);
+  const { addToCart, cart, updateQty, removeFromCart } = useContext(CartContext);
 
   useEffect(() => {
     // Attempt fetch from backend, fallback to dummyData on error
@@ -99,13 +99,26 @@ const Menu = () => {
               
               <div className="food-footer">
                 <span className="food-price">KSh {parseFloat(food.price).toFixed(2)}</span>
-                <button 
-                  className={inCart ? "btn btn-outline" : "btn btn-primary"} 
-                  style={{ padding: '8px 16px' }}
-                  onClick={() => handleAddToCart(food)}
-                >
-                  {inCart ? <><FiCheck /> Added</> : <><FiPlus /> Add</>}
-                </button>
+                
+                {food.is_available === 0 || food.is_available === false ? (
+                  <button className="btn btn-outline" disabled style={{ padding: '8px 16px', color: '#ff4d4d', borderColor: '#ff4d4d', cursor: 'not-allowed' }}>
+                    Out of Stock
+                  </button>
+                ) : inCart ? (
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: '20px', padding: '4px 8px' }}>
+                    <button onClick={() => { if(inCart.qty === 1) removeFromCart(food.id); else updateQty(food.id, -1); }} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '0 10px', fontSize: '1.2rem', outline: 'none' }}>-</button>
+                    <span style={{ fontWeight: 'bold', width: '20px', textAlign: 'center' }}>{inCart.qty}</span>
+                    <button onClick={() => updateQty(food.id, 1)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '0 10px', fontSize: '1.2rem', outline: 'none' }}>+</button>
+                  </div>
+                ) : (
+                  <button 
+                    className="btn btn-primary" 
+                    style={{ padding: '8px 16px' }}
+                    onClick={() => handleAddToCart(food)}
+                  >
+                    <FiPlus /> Add
+                  </button>
+                )}
               </div>
             </div>
           );
