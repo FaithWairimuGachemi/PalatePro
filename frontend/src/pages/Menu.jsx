@@ -23,11 +23,11 @@ const Menu = () => {
   useEffect(() => {
     // Attempt fetch from backend, fallback to dummyData on error
     Promise.all([
-      fetch('http://localhost:5000/api/foods').then(res => {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods`).then(res => {
         if (!res.ok) throw new Error('Foods fetch failed');
         return res.json();
       }),
-      fetch('http://localhost:5000/api/foods/categories/all').then(res => {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/categories/all`).then(res => {
         if (!res.ok) throw new Error('Categories fetch failed');
         return res.json();
       })
@@ -48,14 +48,14 @@ const Menu = () => {
     const fetchRecommendations = async () => {
       try {
         if (user && user.preferences) {
-          const res = await fetch('http://localhost:5000/api/foods/recommended', {
+          const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/recommended`, {
             headers: { Authorization: `Bearer ${user.token}` }
           });
           const data = await res.json();
           setRecommendedFoods(Array.isArray(data) ? data : []);
           setIsTrending(false);
         } else {
-          const res = await fetch('http://localhost:5000/api/foods/bestsellers');
+          const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/bestsellers`);
           const data = await res.json();
           setRecommendedFoods(Array.isArray(data) ? data : []);
           setIsTrending(true);

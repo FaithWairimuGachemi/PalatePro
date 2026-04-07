@@ -355,3 +355,43 @@ footer {
   border-top: 1px solid var(--border-color);
   margin-top: 60px;
 }
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding-top: 20px;
+  }
+  .hero-title {
+    font-size: 3rem;
+  }
+  .hero::before {
+    display: none;
+  }
+  .hero-image {
+    margin-top: 40px;
+    width: 100%;
+  }
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 1rem;
+    gap: 15px;
+  }
+  .page-container {
+    margin-top: 150px;
+    padding: 20px 5%;
+  }
+  .auth-box {
+    padding: 20px;
+  }
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}

@@ -16,7 +16,7 @@ const Dashboard = () => {
     if (!user) return;
     
     if (user.is_restaurant) {
-      fetch('http://localhost:5000/api/foods/provider', {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/provider`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       .then(res => res.json())
@@ -29,7 +29,7 @@ const Dashboard = () => {
         setLoading(false);
       });
     } else {
-      fetch('http://localhost:5000/api/orders/myorders', {
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/myorders`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       .then(res => {
@@ -55,7 +55,7 @@ const Dashboard = () => {
     e.preventDefault();
     setIsSubmitting(true);
     const method = isEditing ? 'PUT' : 'POST';
-    const url = isEditing ? `http://localhost:5000/api/foods/${newFood.id}` : 'http://localhost:5000/api/foods';
+    const url = isEditing ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/${newFood.id}` : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods`;
 
     try {
       const res = await fetch(url, {
@@ -71,7 +71,7 @@ const Dashboard = () => {
         setNewFood({ id: null, name: '', description: '', price: '', image_url: '', category_id: 1, is_available: true });
         setIsEditing(false);
         // Refresh foods
-        const updatedFoodsRes = await fetch('http://localhost:5000/api/foods/provider', {
+        const updatedFoodsRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/provider`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
         const updatedFoods = await updatedFoodsRes.json();
@@ -102,7 +102,7 @@ const Dashboard = () => {
 
   return (
     <div className="page-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', flexWrap: 'wrap', gap: '15px' }}>
         <div>
           <h1 className="hero-title" style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Hello, <span style={{ color: 'var(--primary-color)' }}>{user.name}</span>!</h1>
           <p style={{ color: 'var(--text-muted)' }}>
