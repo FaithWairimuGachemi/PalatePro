@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FiBox, FiClock, FiCheckCircle } from 'react-icons/fi';
+import { FiBox, FiClock, FiCheckCircle, FiTruck } from 'react-icons/fi';
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
@@ -51,6 +51,23 @@ const Dashboard = () => {
     }
   }, [user]);
 
+  const handleConfirmDelivery = async (orderId) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/${orderId}/confirm_delivery`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      if (res.ok) {
+        alert('Thank you for confirming!');
+        window.location.reload();
+      } else {
+        alert('Failed to confirm delivery');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleAddFood = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -95,6 +112,7 @@ const Dashboard = () => {
     switch(status) {
       case 'PENDING': return <FiClock color="#ffc107" />;
       case 'PREPARING': return <FiBox color="#17a2b8" />;
+      case 'ON_DELIVERY': return <FiTruck color="#fd7e14" />;
       case 'DELIVERED': return <FiCheckCircle color="#28a745" />;
       default: return <FiClock />;
     }
@@ -207,6 +225,7 @@ const Dashboard = () => {
                     {getStatusIcon(order.status)}
                     <span style={{ 
                       color: order.status === 'DELIVERED' ? '#28a745' : 
+                            order.status === 'ON_DELIVERY' ? '#fd7e14' :
                             order.status === 'PREPARING' ? '#17a2b8' : '#ffc107' 
                     }}>
                       {order.status}
@@ -214,8 +233,13 @@ const Dashboard = () => {
                   </div>
                 </div>
                 
-                <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-                  KSh {parseFloat(order.total_amount).toFixed(2)}
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                    KSh {parseFloat(order.total_amount).toFixed(2)}
+                  </div>
+                  {order.status === 'ON_DELIVERY' && !user.is_restaurant && (
+                    <button onClick={() => handleConfirmDelivery(order.id)} className="btn btn-primary" style={{ marginTop: '10px', fontSize: '0.85rem', padding: '6px 12px' }}>Confirm Delivery</button>
+                  )}
                 </div>
               </div>
 

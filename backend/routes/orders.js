@@ -89,6 +89,19 @@ router.get('/', protect, admin, async (req, res) => {
   }
 });
 
+// @route PUT /api/orders/:id/confirm_delivery
+// @desc User confirms delivery received
+router.put('/:id/confirm_delivery', protect, async (req, res) => {
+  try {
+    const [rows] = await db.execute('SELECT * FROM orders WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
+    if (rows.length === 0) return res.status(404).json({ message: 'Order not found' });
+    await db.execute('UPDATE orders SET status = "DELIVERED" WHERE id = ?', [req.params.id]);
+    res.json({ message: 'Delivery confirmed!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // @route PUT /api/orders/:id/status
 // @desc Update order status (Admin)
 router.put('/:id/status', protect, admin, async (req, res) => {
