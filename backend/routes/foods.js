@@ -45,9 +45,26 @@ const getBestsellers = async () => {
     ORDER BY total_ordered DESC
     LIMIT 4
   `);
-  if (bestsellers.length > 0) return bestsellers;
-  const [randomFoods] = await db.query('SELECT f.*, categories.name as category_name, users.name as restaurant_name FROM foods f LEFT JOIN categories ON f.category_id = categories.id LEFT JOIN users ON f.restaurant_id = users.id WHERE f.is_available = 1 LIMIT 4');
-  return randomFoods;
+  
+  if (bestsellers.length === 4) {
+    return bestsellers;
+  }
+  
+  const excludeIds = bestsellers.map(b => b.id);
+  const excludeSql = excludeIds.length > 0 ? `AND f.id NOT IN (${excludeIds.join(',')})` : '';
+  const limit = 4 - bestsellers.length;
+  
+  const [randomFoods] = await db.query(`
+    SELECT f.*, categories.name as category_name, users.name as restaurant_name 
+    FROM foods f 
+    LEFT JOIN categories ON f.category_id = categories.id 
+    LEFT JOIN users ON f.restaurant_id = users.id 
+    WHERE f.is_available = 1 ${excludeSql}
+    ORDER BY RAND() 
+    LIMIT ${limit}
+  `);
+  
+  return [...bestsellers, ...randomFoods];
 };
 
 // @route GET /api/foods/bestsellers
@@ -74,7 +91,7 @@ router.get('/recommended', protect, async (req, res) => {
       categoryIds = typeof prefs === 'string' ? JSON.parse(prefs) : prefs;
     } catch(e) { }
 
-    if (!Array.isArray(categoryIds) || categoryIds.length === 0) {
+    if (categoryIds.length === 0) {
        return res.json(await getBestsellers());
     }
 
@@ -89,8 +106,16 @@ router.get('/recommended', protect, async (req, res) => {
       LIMIT 4
     `, categoryIds);
 
-    if (recommended.length === 0) return res.json(await getBestsellers());
-    res.json(recommended);
+    if (recommended.length === 4) {
+      return res.json(recommended);
+    }
+    
+    // Pad missing slots with dynamic bestsellers
+    const padItems = await getBestsellers();
+    const existingIds = recommended.map(r => r.id);
+    const newItems = padItems.filter(p => !existingIds.includes(p.id)).slice(0, 4 - recommended.length);
+    
+    res.json([...recommended, ...newItems]);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error fetching recommendations' });

@@ -32,12 +32,18 @@ router.post('/', protect, async (req, res) => {
     await connection.commit();
     
     let mpesaResponse = null;
+    let mpesaError = null;
     if (mpesaNumber) {
       const mpesa = require('../utils/mpesa');
-      mpesaResponse = await mpesa.initiateSTKPush(mpesaNumber, totalAmount, orderId);
+      try {
+        mpesaResponse = await mpesa.initiateSTKPush(mpesaNumber, totalAmount, orderId);
+      } catch (e) {
+        console.error("Non-fatal STK Push Failure:", e.message);
+        mpesaError = "M-Pesa push couldn't be sent automatically. You can pay on delivery.";
+      }
     }
 
-    res.status(201).json({ message: 'Order created', orderId, mpesaResponse });
+    res.status(201).json({ message: 'Order created', orderId, mpesaResponse, mpesaError });
   } catch (error) {
     await connection.rollback();
     console.error(error);

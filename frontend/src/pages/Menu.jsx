@@ -95,7 +95,7 @@ const Menu = () => {
               return (
                 <div key={food.id} className="food-card glass" style={{ minWidth: '280px', flex: '0 0 auto', scrollSnapAlign: 'start' }}>
                   <div className="food-img-wrapper" style={{ height: '150px' }}>
-                    <img src={food.image_url} alt={food.name} className="food-img" style={{ height: '100%', objectFit: 'cover' }} />
+                    <img src={food.image_url} alt={food.name} className="food-img" style={{ height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" />
                   </div>
                   <h3 className="food-title" style={{ fontSize: '1.2rem', margin: '10px 0' }}>{food.name}</h3>
                   {food.restaurant_name && (
@@ -157,7 +157,7 @@ const Menu = () => {
           return (
             <div key={food.id} className="food-card glass">
               <div className="food-img-wrapper">
-                <img src={food.image_url} alt={food.name} className="food-img" />
+                <img src={food.image_url} alt={food.name} className="food-img" referrerPolicy="no-referrer" />
               </div>
               <h3 className="food-title">{food.name}</h3>
               {food.restaurant_name && (

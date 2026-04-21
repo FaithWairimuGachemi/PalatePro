@@ -42,6 +42,14 @@ exports.initiateSTKPush = async (phone, amount, orderId) => {
     });
     const token = tokenRes.data.access_token;
     
+    // 1.5 Normalize phone number to 254XXXXXXXX format
+    let normalizedPhone = phone.toString().replace(/[^0-9]/g, '');
+    if (normalizedPhone.startsWith('0')) {
+      normalizedPhone = '254' + normalizedPhone.substring(1);
+    } else if (normalizedPhone.length === 9) {
+      normalizedPhone = '254' + normalizedPhone;
+    }
+
     // 2. STK Push
     const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, -3);
     const password = Buffer.from(`${shortCode}${passkey}${timestamp}`).toString('base64');
@@ -52,9 +60,9 @@ exports.initiateSTKPush = async (phone, amount, orderId) => {
       Timestamp: timestamp,
       TransactionType: "CustomerPayBillOnline",
       Amount: Math.ceil(amount), // M-pesa requires round numbers
-      PartyA: phone,
+      PartyA: normalizedPhone,
       PartyB: shortCode,
-      PhoneNumber: phone,
+      PhoneNumber: normalizedPhone,
       CallBackURL: `https://yourdomain.com/api/mpesa/callback`,
       AccountReference: `PalatePro Order ${orderId}`,
       TransactionDesc: "Payment for Food Delivery"

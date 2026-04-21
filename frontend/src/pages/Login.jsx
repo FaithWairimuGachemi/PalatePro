@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +17,7 @@ const Login = () => {
   };
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -29,9 +31,13 @@ const Login = () => {
 
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
     const formattedPhone = '+254' + formData.phone;
+    const finalPrefs = formData.customCraving && formData.customCraving.trim() !== '' 
+      ? [...formData.preferences, formData.customCraving.trim()]
+      : formData.preferences;
+
     const payload = isLogin 
       ? { phone: formattedPhone, password: formData.password }
-      : { ...formData, phone: formattedPhone };
+      : { ...formData, phone: formattedPhone, preferences: finalPrefs };
     
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${endpoint}`, {
@@ -90,14 +96,26 @@ const Login = () => {
                   <label>What are you craving? (Choose your favorites)</label>
                   <div style={{ display: 'flex', gap: '15px', marginTop: '10px', flexWrap: 'wrap' }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
-                      <input type="checkbox" checked={formData.preferences.includes(1)} onChange={() => handleCheckboxChange(1)} style={{ width: 'auto', margin: 0 }} /> 🍔 Burgers
+                      <input type="checkbox" checked={formData.preferences.includes(1)} onChange={() => handleCheckboxChange(1)} style={{ width: 'auto', margin: 0 }} /> 🍖 Nyama Choma
                     </label>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
-                      <input type="checkbox" checked={formData.preferences.includes(2)} onChange={() => handleCheckboxChange(2)} style={{ width: 'auto', margin: 0 }} /> 🍕 Pizzas
+                      <input type="checkbox" checked={formData.preferences.includes(2)} onChange={() => handleCheckboxChange(2)} style={{ width: 'auto', margin: 0 }} /> 🥟 Mutura
                     </label>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
-                      <input type="checkbox" checked={formData.preferences.includes(3)} onChange={() => handleCheckboxChange(3)} style={{ width: 'auto', margin: 0 }} /> 🥤 Drinks
+                      <input type="checkbox" checked={formData.preferences.includes(3)} onChange={() => handleCheckboxChange(3)} style={{ width: 'auto', margin: 0 }} /> 🥘 Ugali & Greens
                     </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '8px', cursor: 'pointer' }}>
+                      <input type="checkbox" checked={formData.preferences.includes(4)} onChange={() => handleCheckboxChange(4)} style={{ width: 'auto', margin: 0 }} /> ☕ Kenyan Tea (Chai)
+                    </label>
+                  </div>
+                  <div style={{ marginTop: '15px' }}>
+                    <input 
+                      type="text" 
+                      placeholder="Or type another meal you're craving..." 
+                      value={formData.customCraving || ''}
+                      onChange={(e) => setFormData({...formData, customCraving: e.target.value})}
+                      style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'white', outline: 'none' }}
+                    />
                   </div>
                 </div>
               )}
@@ -127,7 +145,23 @@ const Login = () => {
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password" 
+                value={formData.password} 
+                onChange={handleChange} 
+                required 
+                style={{ width: '100%', paddingRight: '40px', boxSizing: 'border-box' }}
+              />
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)} 
+                style={{ position: 'absolute', right: '10px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', outline: 'none' }}
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
           </div>
           
           <button type="submit" className="btn btn-primary auth-btn" disabled={loading}>

@@ -141,9 +141,10 @@ const Dashboard = () => {
               <input type="url" placeholder="Image URL (e.g. https://.../image.jpg)" value={newFood.image_url} onChange={(e) => setNewFood({...newFood, image_url: e.target.value})} style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'white', outline: 'none' }} />
               
               <select value={newFood.category_id} onChange={(e) => setNewFood({...newFood, category_id: e.target.value})} style={{ padding: '12px', background: '#1c1c1c', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'white', outline: 'none' }}>
-                <option value="1">Burgers</option>
-                <option value="2">Pizzas</option>
-                <option value="3">Drinks</option>
+                <option value="1">Main Courses</option>
+                <option value="2">Street Food & Snacks</option>
+                <option value="3">Sides & Accompaniments</option>
+                <option value="4">Beverages</option>
               </select>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
@@ -175,7 +176,7 @@ const Dashboard = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
               {providerFoods.map(food => (
                 <div key={food.id} className="glass" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
-                  {food.image_url && <img src={food.image_url} alt={food.name} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', marginBottom: '15px' }} />}
+                  {food.image_url && <img src={food.image_url} alt={food.name} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', marginBottom: '15px' }} referrerPolicy="no-referrer" />}
                   <h3 style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{food.name}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '15px', height: '40px', overflow: 'hidden' }}>{food.description}</p>
                   
@@ -247,7 +248,7 @@ const Dashboard = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                 {order.items && order.items.map(item => (
                   <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
-                    <img src={item.image_url} alt={item.name} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                    <img src={item.image_url} alt={item.name} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} referrerPolicy="no-referrer" />
                     <div style={{ flex: 1 }}>
                       <h4 style={{ margin: '0 0 5px 0', fontSize: '1.1rem' }}>{item.qty ? item.qty : item.quantity}x {item.name}</h4>
                       <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>KSh {parseFloat(item.price).toFixed(2)} each</p>

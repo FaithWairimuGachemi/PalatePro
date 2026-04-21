@@ -61,7 +61,7 @@ const Cart = () => {
         },
         body: JSON.stringify({
           orderItems: cart,
-          totalAmount: cartTotal + cartTotal * 0.08 + 250,
+          totalAmount: cartTotal + cartTotal * 0.08 + 70,
           deliveryLocation,
           deliveryPhone,
           mpesaNumber
@@ -70,13 +70,17 @@ const Cart = () => {
       
       const data = await response.json();
       if (response.ok || response.status === 401) {
-        // We mock it passing even if 401 unauth to ensure UI demo works nicely
-        setMpesaStatus('STK Push sent! Please check your phone to enter your M-Pesa PIN.');
+        if (data.mpesaError) {
+          setMpesaStatus(`Order Placed. ⚠️ ${data.mpesaError}`);
+        } else {
+          setMpesaStatus('✓ Order placed! STK Push sent! Please check your phone.');
+        }
+        
         setTimeout(() => {
           clearCart();
           setMpesaStatus(null);
           navigate('/dashboard');
-        }, 4000);
+        }, 5000);
       } else {
         alert(data.message || 'Failed to checkout');
       }
@@ -111,7 +115,7 @@ const Cart = () => {
         <div style={{ flex: '1 1 60%' }}>
           {cart.map(item => (
             <div key={item.id} className="glass" style={{ display: 'flex', padding: '20px', marginBottom: '20px', alignItems: 'center', gap: '20px' }}>
-              <img src={item.image_url} alt={item.name} style={{ width: '100px', height: '100px', borderRadius: '12px', objectFit: 'cover' }} />
+              <img src={item.image_url} alt={item.name} style={{ width: '100px', height: '100px', borderRadius: '12px', objectFit: 'cover' }} referrerPolicy="no-referrer" />
               
               <div style={{ flex: 1 }}>
                 <h3 style={{ fontSize: '1.2rem', marginBottom: '5px' }}>{item.name}</h3>
@@ -154,12 +158,12 @@ const Cart = () => {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
               <span style={{ color: 'var(--text-muted)' }}>Delivery</span>
-              <span>KSh 250.00</span>
+              <span>KSh 70.00</span>
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', paddingTop: '15px', borderTop: '1px solid var(--border-color)', fontSize: '1.5rem', fontWeight: 'bold' }}>
               <span>Total</span>
-              <span style={{ color: 'var(--primary-color)' }}>KSh {(cartTotal + cartTotal * 0.08 + 250).toFixed(2)}</span>
+              <span style={{ color: 'var(--primary-color)' }}>KSh {(cartTotal + cartTotal * 0.08 + 70).toFixed(2)}</span>
             </div>
             
             <div style={{ marginTop: '25px', textAlign: 'left' }}>
