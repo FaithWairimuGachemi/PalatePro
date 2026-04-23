@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, admin, restaurant } = require('../middleware/authMiddleware');
 
 // @route POST /api/orders
 // @desc Create new order and trigger M-Pesa
@@ -108,9 +108,40 @@ router.put('/:id/confirm_delivery', protect, async (req, res) => {
   }
 });
 
+// @route GET /api/orders/provider
+// @desc Get orders specifically containing items from the logged in restaurant provider
+router.get('/provider', protect, restaurant, async (req, res) => {
+  try {
+    const [orders] = await db.query(`
+      SELECT DISTINCT o.*, u.name as user_name, u.email 
+      FROM orders o 
+      JOIN users u ON o.user_id = u.id 
+      JOIN order_items oi ON o.id = oi.order_id
+      JOIN foods f ON oi.food_id = f.id
+      WHERE f.restaurant_id = ?
+      ORDER BY o.created_at DESC
+    `, [req.user.id]);
+    
+    for (let order of orders) {
+      const [items] = await db.query(`
+        SELECT oi.*, f.name, f.image_url, f.is_available 
+        FROM order_items oi 
+        JOIN foods f ON oi.food_id = f.id 
+        WHERE oi.order_id = ? AND f.restaurant_id = ?
+      `, [order.id, req.user.id]);
+      order.items = items;
+    }
+
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error fetching provider orders' });
+  }
+});
+
 // @route PUT /api/orders/:id/status
-// @desc Update order status (Admin)
-router.put('/:id/status', protect, admin, async (req, res) => {
+// @desc Update order status (Admin/Restaurant)
+router.put('/:id/status', protect, restaurant, async (req, res) => {
   const { status } = req.body;
   try {
     await db.execute('UPDATE orders SET status = ? WHERE id = ?', [status, req.params.id]);

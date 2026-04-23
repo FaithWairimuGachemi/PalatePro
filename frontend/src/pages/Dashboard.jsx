@@ -6,16 +6,50 @@ import { FiBox, FiClock, FiCheckCircle, FiTruck } from 'react-icons/fi';
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
+  const [providerOrders, setProviderOrders] = useState([]);
   const [providerFoods, setProviderFoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newFood, setNewFood] = useState({ id: null, name: '', description: '', price: '', image_url: '', category_id: 1, is_available: true });
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const fetchProviderOrders = () => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/provider`, {
+      headers: { Authorization: `Bearer ${user.token}` }
+    })
+    .then(res => res.json())
+    .then(data => {
+      setProviderOrders(Array.isArray(data) ? data : []);
+    })
+    .catch(err => console.error(err));
+  };
+
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        fetchProviderOrders();
+      } else {
+        alert('Failed to update status');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error');
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
     
     if (user.is_restaurant) {
+      fetchProviderOrders();
       fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/provider`, {
         headers: { Authorization: `Bearer ${user.token}` }
       })
@@ -202,6 +236,66 @@ const Dashboard = () => {
               ))}
             </div>
           )}
+
+          <h2 style={{ fontSize: '1.8rem', marginTop: '40px', marginBottom: '20px' }}>Restaurant Admin Console: Incoming Orders</h2>
+          {providerOrders.length === 0 ? (
+            <div className="glass" style={{ padding: '30px', textAlign: 'center' }}>
+              <p style={{ color: 'var(--text-muted)' }}>You have no incoming orders yet.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {providerOrders.map(order => (
+                <div key={order.id} className="glass" style={{ padding: '25px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
+                    <div>
+                      <p style={{ color: 'white', fontSize: '1.1rem', marginBottom: '5px', fontWeight: 'bold' }}>
+                        Order #{order.id} - {order.user_name} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 'normal', marginLeft: '10px' }}>({new Date(order.created_at).toLocaleString()})</span>
+                      </p>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '10px' }}>
+                        {order.delivery_location} | {order.delivery_phone}
+                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
+                        {getStatusIcon(order.status)}
+                        <span style={{ 
+                          color: order.status === 'DELIVERED' ? '#28a745' : 
+                                order.status === 'ON_DELIVERY' ? '#fd7e14' :
+                                order.status === 'PREPARING' ? '#17a2b8' : '#ffc107' 
+                        }}>
+                          {order.status}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        {order.status === 'PENDING' && (
+                          <button onClick={() => updateOrderStatus(order.id, 'PREPARING')} className="btn btn-outline" style={{ fontSize: '0.85rem', padding: '6px 12px' }}>Mark Preparing</button>
+                        )}
+                        {(order.status === 'PENDING' || order.status === 'PREPARING') && (
+                          <button onClick={() => updateOrderStatus(order.id, 'ON_DELIVERY')} className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '6px 12px' }}>Dispatch Delivery</button>
+                        )}
+                        {order.status === 'ON_DELIVERY' && (
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Waiting on Customer...</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Items List */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    {order.items && order.items.map(item => (
+                      <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '15px', background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
+                        <img src={item.image_url} alt={item.name} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} referrerPolicy="no-referrer" />
+                        <div style={{ flex: 1 }}>
+                          <h4 style={{ margin: '0 0 5px 0', fontSize: '1.1rem' }}>{item.quantity}x {item.name}</h4>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       ) : (
         <>
@@ -220,7 +314,7 @@ const Dashboard = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
                 <div>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '5px' }}>
-                    Order #{order.id} • {new Date(order.created_at).toLocaleDateString()}
+                    Order #{order.id} • {new Date(order.created_at).toLocaleString()}
                   </p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
                     {getStatusIcon(order.status)}

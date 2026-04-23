@@ -88,7 +88,7 @@ const AdminDashboard = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
                 <div>
                   <p style={{ color: 'white', fontSize: '1.1rem', marginBottom: '5px', fontWeight: 'bold' }}>
-                    Order #{order.id} - {order.user_name}
+                    Order #{order.id} - {order.user_name} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 'normal', marginLeft: '10px' }}>({new Date(order.created_at).toLocaleString()})</span>
                   </p>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '10px' }}>
                     {order.delivery_location} | {order.delivery_phone}
