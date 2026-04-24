@@ -88,6 +88,16 @@ router.get('/', protect, admin, async (req, res) => {
       JOIN users u ON o.user_id = u.id 
       ORDER BY o.created_at DESC
     `);
+    
+    // Fetch items for each order
+    for (let order of orders) {
+      const [items] = await db.query(
+        'SELECT oi.*, f.name, f.image_url, f.price FROM order_items oi JOIN foods f ON oi.food_id = f.id WHERE oi.order_id = ?',
+        [order.id]
+      );
+      order.items = items;
+    }
+
     res.json(orders);
   } catch (error) {
     console.error(error);

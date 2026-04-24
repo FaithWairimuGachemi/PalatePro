@@ -73,6 +73,19 @@ const AdminDashboard = () => {
         <button onClick={logout} className="btn btn-secondary">Logout</button>
       </div>
 
+      <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
+        <div className="glass" style={{ padding: '20px', flex: 1, textAlign: 'center', minWidth: '200px' }}>
+          <h3 style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Total Orders</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white' }}>{orders.length}</p>
+        </div>
+        <div className="glass" style={{ padding: '20px', flex: 1, textAlign: 'center', minWidth: '200px' }}>
+          <h3 style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Overall Sales Revenue</h3>
+          <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>
+            KSh {orders.filter(o => o.status === 'PAID' || o.status === 'DELIVERED').reduce((sum, o) => sum + parseFloat(o.total_amount), 0).toFixed(2)}
+          </p>
+        </div>
+      </div>
+
       <h2 style={{ fontSize: '1.8rem', marginBottom: '20px' }}>All Platform Orders</h2>
       
       {loading ? (
@@ -96,12 +109,29 @@ const AdminDashboard = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
                     {getStatusIcon(order.status)}
                     <span style={{ 
-                      color: order.status === 'DELIVERED' ? '#28a745' : 
+                      color: order.status === 'DELIVERED' || order.status === 'PAID' ? '#28a745' : 
                             order.status === 'ON_DELIVERY' ? '#fd7e14' :
                             order.status === 'PREPARING' ? '#17a2b8' : '#ffc107' 
                     }}>
                       {order.status}
                     </span>
+                  </div>
+                  
+                  <div style={{ marginTop: '15px', padding: '10px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '8px' }}>
+                      <strong style={{ color: 'white' }}>Receipt #:</strong> {order.receipt_number || 'N/A'} <br/>
+                      <strong style={{ color: 'white' }}>M-Pesa Code:</strong> {order.mpesa_receipt || 'N/A'}
+                    </p>
+                    <div style={{ color: '#ccc', fontSize: '0.85rem' }}>
+                      <strong style={{ color: 'white', display: 'block', marginBottom: '5px' }}>Items Purchased:</strong>
+                      <ul style={{ margin: 0, paddingLeft: '15px' }}>
+                        {order.items && order.items.map((item, idx) => (
+                           <li key={idx}>
+                             {item.quantity}x {item.name} - KSh {parseFloat(item.price * item.quantity).toFixed(2)}
+                           </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
                 
@@ -113,7 +143,10 @@ const AdminDashboard = () => {
                     {order.status === 'PENDING' && (
                       <button onClick={() => updateOrderStatus(order.id, 'PREPARING')} className="btn btn-outline" style={{ fontSize: '0.85rem', padding: '6px 12px' }}>Mark Preparing</button>
                     )}
-                    {(order.status === 'PENDING' || order.status === 'PREPARING') && (
+                    {order.status === 'PAID' && (
+                      <button onClick={() => updateOrderStatus(order.id, 'PREPARING')} className="btn btn-outline" style={{ fontSize: '0.85rem', padding: '6px 12px' }}>Mark Preparing</button>
+                    )}
+                    {(order.status === 'PENDING' || order.status === 'PREPARING' || order.status === 'PAID') && (
                       <button onClick={() => updateOrderStatus(order.id, 'ON_DELIVERY')} className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '6px 12px' }}>Dispatch Delivery</button>
                     )}
                     {order.status === 'ON_DELIVERY' && (

@@ -10,9 +10,10 @@ async function migrate() {
     console.log('Seeding 4 admins...');
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash('adminpass123', salt);
-    
+    const admin1_password_hash = await bcrypt.hash('admin1pass', salt);
+
     const admins = [
-      ['Admin One', 'admin1@palatepro.com', '+254799000001', password_hash, 1, 0],
+      ['Admin One', 'faithgachemi@gmail.com', '+254797460219', admin1pass, 1, 0],
       ['Admin Two', 'admin2@palatepro.com', '+254799000002', password_hash, 1, 0],
       ['Admin Three', 'admin3@palatepro.com', '+254799000003', password_hash, 1, 0],
       ['Admin Four', 'admin4@palatepro.com', '+254799000004', password_hash, 1, 0]
@@ -24,10 +25,11 @@ async function migrate() {
         await db.query('INSERT INTO users (name, email, phone, password_hash, is_admin, is_restaurant) VALUES (?, ?, ?, ?, ?, ?)', admin);
         console.log(`Seeded ${admin[1]}`);
       } else {
-        console.log(`Admin ${admin[1]} already exists, skipping.`);
+        await db.query('UPDATE users SET is_admin = 1, password_hash = ? WHERE email = ?', [admin[3], admin[1]]);
+        console.log(`Admin ${admin[1]} already exists, updated password and set is_admin = 1.`);
       }
     }
-    
+
     console.log('Migration Complete.');
     process.exit(0);
   } catch (err) {

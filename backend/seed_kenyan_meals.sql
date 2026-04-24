@@ -1,11 +1,7 @@
 USE palatepro_db;
 
--- 1. Reset Categories
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE categories;
-SET FOREIGN_KEY_CHECKS = 1;
-
-INSERT INTO categories (name, description) VALUES 
+-- 1. Insert Categories (IGNORE if exist)
+INSERT IGNORE INTO categories (name, description) VALUES 
 ('Main Courses', 'Hearty traditional and modern Kenyan main dishes'),
 ('Street Food & Snacks', 'Quick, authentic bites found on the streets of Nairobi'),
 ('Sides & Accompaniments', 'Essential additions to any Kenyan meal'),
@@ -20,7 +16,7 @@ INSERT INTO foods (name, description, price, image_url, category_id) VALUES
 ('Nyama Choma', 'Roasted goat meat, a quintessential Kenyan delicacy.', 350, 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg', 1),
 ('Pilau', 'Spiced rice cooked with beef, bursting with coastal flavors.', 250, 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png', 1),
 ('Githeri', 'A hearty traditional mixture of boiled maize and beans.', 150, 'https://www.chefspencil.com/wp-content/uploads/githeri-640x640.jpg', 1),
-('Kuku choma', 'Chicken cooked in a rich, spiced coconut curry.', 300, 'https://art.whisk.com/image/upload/fl_progressive,h_264,w_214,c_fill,dpr_2.0/v1657970732/recipe/e22bc894a3173ad736cb4688072af1ed.jpg', 1),
+('Kuku choma', 'Chicken cooked in a rich, spiced coconut curry.', 300, 'https://art.whisk.com/image/upload/fl_progressiveh_264w_214c_filldpr_2.0/v1657970732/recipe/e22bc894a3173ad736cb4688072af1ed.jpg', 1),
 ('Tilapia Wet Fry', 'Fresh Victoria tilapia pan-fried and stewed in tomatoes and onions.', 400, 'https://media.gettyimages.com/id/162893757/photo/beltsville-md-the-fried-tilapia-dish-features-a-masala-sauce-with-onions-tomato-garlic-bell.jpg?s=612x612&w=0&k=20&c=KLh57QwKQ95iSPY74QED-WAIMiplkCcEDISEMSsAvbQ=', 1),
 ('Omena', 'Small silver cyprinid fish stewed with onions and tomatoes.', 150, 'https://img-global.cpcdn.com/steps/cab9a8c93869ead2/160x128cq80/omena-wet-fry-recipe-step-4-photo.jpg', 1),
 ('Biryani', 'A robust Swahili dish of fragrant rice and heavily spiced meat.', 250, 'https://images.pexels.com/photos/16020573/pexels-photo-16020573/free-photo-of-rice-and-chicken-meal-on-the-plate.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500', 1),
@@ -29,7 +25,7 @@ INSERT INTO foods (name, description, price, image_url, category_id) VALUES
 ('Mukimo', 'Mashed potatoes, pumpkin leaves, corn, and beans.', 120, 'https://instapilau.com/media/products/2025/5/20/original_96c3dc70e2a2455eb99e308de46d0b67.jpg', 1),
 
 -- Street Food & Snacks
-('Mutura', 'Kenyan sausage filled with spiced minced meat and blood, grilled over charcoal.', 80, 'https://nairoBimussings.wordpress.com/wp-content/uploads/2016/06/mutura1.jpg?w=660', 2),
+('Mutura', 'Kenyan sausage filled with spiced minced meat and blood, grilled over charcoal.', 80, 'https://nairobimussings.wordpress.com/wp-content/uploads/2016/06/mutura1.jpg?w=660', 2),
 ('Chips Mayai', 'A legendary street food combining french fries baked inside an omelet.', 100, 'https://thumbs.dreamstime.com/b/chipsi-mayai-chips-eggs-common-food-found-tanzania-east-africa-most-basic-form-chipsi-mayai-simple-potato-egg-omelette-169584722.jpg', 2),
 ('Samosa', 'Crispy triangular pastries stuffed with spiced minced beef.', 60, 'https://thumbs.dreamstime.com/b/golden-samosas-plate-crispy-served-garnish-evoking-delicious-flavors-306224583.jpg', 2),
 ('Smokie', 'Grilled smokie sausage split and filled with kachumbari.', 70, 'https://kitchenfunwithmy3sons.com/wp-content/uploads/2019/11/little-smokies-feature-400x400.jpg', 2),

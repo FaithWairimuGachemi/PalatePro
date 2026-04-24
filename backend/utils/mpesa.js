@@ -11,9 +11,36 @@ exports.initiateSTKPush = async (phone, amount, orderId) => {
     setTimeout(async () => {
        try {
          const db = require('../db');
-         const receipt = 'OXY' + Math.floor(1000000 + Math.random() * 9000000);
-         await db.execute("UPDATE orders SET status = 'PAID', mpesa_receipt = ? WHERE id = ?", [receipt, orderId]);
+         const { sendReceiptEmail } = require('./email');
+
+         const mpesa_receipt = 'OXY' + Math.floor(1000000 + Math.random() * 9000000);
+         const receipt_number = 'RCPT-' + Date.now().toString().slice(-6) + '-' + orderId;
+
+         await db.execute("UPDATE orders SET status = 'PAID', mpesa_receipt = ?, receipt_number = ? WHERE id = ?", [mpesa_receipt, receipt_number, orderId]);
          console.log(`[MOCK DARAJA WEBHOOK] Received successful payment callback for Order ${orderId}. Marked as PAID.`);
+
+         // Fetch details for email
+         const [orderRows] = await db.query(
+           'SELECT o.total_amount, o.created_at, u.email FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?',
+           [orderId]
+         );
+         
+         if (orderRows.length > 0) {
+           const orderInfo = orderRows[0];
+           
+           const [items] = await db.query(
+             'SELECT f.name, oi.quantity, oi.price FROM order_items oi JOIN foods f ON oi.food_id = f.id WHERE oi.order_id = ?',
+             [orderId]
+           );
+
+           await sendReceiptEmail(orderInfo.email, {
+             receipt_number,
+             mpesa_receipt,
+             total_amount: orderInfo.total_amount,
+             date: orderInfo.created_at,
+             items
+           });
+         }
        } catch (err) {
          console.error('Mock M-Pesa callback error:', err);
        }

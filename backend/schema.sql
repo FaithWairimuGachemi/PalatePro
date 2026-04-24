@@ -40,7 +40,9 @@ CREATE TABLE IF NOT EXISTS orders (
     delivery_location TEXT,
     delivery_phone VARCHAR(20),
     mpesa_number VARCHAR(20),
-    status ENUM('PENDING', 'PREPARING', 'ON_DELIVERY', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
+    mpesa_receipt VARCHAR(100),
+    receipt_number VARCHAR(100),
+    status ENUM('PENDING', 'PREPARING', 'ON_DELIVERY', 'DELIVERED', 'CANCELLED', 'PAID') DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
