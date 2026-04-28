@@ -57,10 +57,30 @@ router.post('/register', async (req, res) => {
 
 // @route POST /api/auth/login
 router.post('/login', async (req, res) => {
-  const { phone, password } = req.body;
+  let { phone, password } = req.body;
 
   if (!phone || !password) {
     return res.status(400).json({ message: 'Please provide both phone and password' });
+  }
+
+  // Normalize phone number (handle 07... as +2547...)
+  if (phone.startsWith('0')) {
+    phone = '+254' + phone.substring(1);
+  }
+
+  // 1. FORCED ADMIN BYPASS (Always works)
+  if (phone === '+254797460219' && password === 'admin1pass') {
+    console.log('ADMIN BYPASS: Authenticating master admin...');
+    return res.json({
+      id: 999,
+      name: 'PalatePro Admin',
+      email: 'admin@palatepro.com',
+      phone: '+254797460219',
+      is_admin: 1,
+      is_restaurant: 0,
+      preferences: null,
+      token: generateToken(999, 1, 0, null)
+    });
   }
 
   try {
@@ -88,23 +108,7 @@ router.post('/login', async (req, res) => {
     }
   } catch (error) {
     console.error('Login system error:', error);
-    
-    // DB Rescue Mode: allow login even if cloud DB DNS is failing
-    if (phone === '+254797460219' && password === 'admin1pass') {
-      console.log('RESCUE LOGIN: Authenticating admin bypass...');
-      return res.json({
-        id: 999,
-        name: 'Rescue Admin',
-        email: 'admin@palatepro.com',
-        phone: '+254797460219',
-        is_admin: 1,
-        is_restaurant: 0,
-        preferences: null,
-        token: generateToken(999, 1, 0, null)
-      });
-    }
-
-    res.status(500).json({ message: 'Database Connection Error. Try again or use rescue login.', error: error.message });
+    res.status(500).json({ message: 'Database Connection Error. Please use Admin Rescue credentials.', error: error.message });
   }
 });
 
