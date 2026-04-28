@@ -46,7 +46,14 @@ const Login = () => {
         body: JSON.stringify(payload)
       });
       
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        const text = await res.text();
+        console.error('Server returned non-JSON response:', text);
+        throw new Error('Server returned an invalid response (HTML instead of JSON). This often means the Backend is down or blocked.');
+      }
       
       if (!res.ok) {
         throw new Error(data.message || 'Authentication failed');
