@@ -13,7 +13,7 @@ async function migrate() {
     const admin1_password_hash = await bcrypt.hash('admin1pass', salt);
 
     const admins = [
-      ['Admin One', 'faithgachemi@gmail.com', '+254797460219', admin1pass, 1, 0],
+      ['Admin One', 'faithgachemi@gmail.com', '+254797460219', admin1_password_hash, 1, 0],
       ['Admin Two', 'admin2@palatepro.com', '+254799000002', password_hash, 1, 0],
       ['Admin Three', 'admin3@palatepro.com', '+254799000003', password_hash, 1, 0],
       ['Admin Four', 'admin4@palatepro.com', '+254799000004', password_hash, 1, 0]

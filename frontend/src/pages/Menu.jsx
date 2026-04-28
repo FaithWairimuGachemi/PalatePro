@@ -4,10 +4,16 @@ import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 
 const dummyData = [
-  { id: 1, name: 'Nyama Choma', description: 'Roasted goat meat, a quintessential Kenyan delicacy.', price: 350, image_url: '', category_name: 'Main Courses' },
-  { id: 2, name: 'Pilau', description: 'Spiced rice cooked with beef, bursting with coastal flavors.', price: 250, image_url: '', category_name: 'Main Courses' },
-  { id: 3, name: 'Mutura', description: 'Kenyan sausage filled with spiced minced meat and blood, grilled over charcoal.', price: 80, image_url: '', category_name: 'Street Food' },
-  { id: 4, name: 'Chips Mayai', description: 'A legendary street food combining french fries baked inside an omelet.', price: 100, image_url: '', category_name: 'Street Food' },
+  { id: 1, name: 'Nyama Choma', description: 'Roasted goat meat, a quintessential Kenyan delicacy.', price: 350, image_url: 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg', category_name: 'Main Courses' },
+  { id: 2, name: 'Pilau', description: 'Spiced rice cooked with beef, bursting with coastal flavors.', price: 250, image_url: 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png', category_name: 'Main Courses' },
+  { id: 3, name: 'Githeri', description: 'A hearty traditional mixture of boiled maize and beans.', price: 150, image_url: 'https://www.chefspencil.com/wp-content/uploads/githeri-640x640.jpg', category_name: 'Main Courses' },
+  { id: 4, name: 'Kuku Choma', description: 'Chicken grilled to perfection with authentic Kenyan spices.', price: 300, image_url: 'https://art.whisk.com/image/upload/fl_progressiveh_264w_214c_filldpr_2.0/v1657970732/recipe/e22bc894a3173ad736cb4688072af1ed.jpg', category_name: 'Main Courses' },
+  { id: 5, name: 'Mutura', description: 'Kenyan sausage filled with spiced minced meat and blood, grilled over charcoal.', price: 80, image_url: 'https://nairobimussings.wordpress.com/wp-content/uploads/2016/06/mutura1.jpg?w=660', category_name: 'Street Food & Snacks' },
+  { id: 6, name: 'Chips Mayai', description: 'A legendary street food combining french fries baked inside an omelet.', price: 100, image_url: 'https://thumbs.dreamstime.com/b/chipsi-mayai-chips-eggs-common-food-found-tanzania-east-africa-most-basic-form-chipsi-mayai-simple-potato-egg-omelette-169584722.jpg', category_name: 'Street Food & Snacks' },
+  { id: 7, name: 'Samosa', description: 'Crispy triangular pastries stuffed with spiced minced beef.', price: 60, image_url: 'https://thumbs.dreamstime.com/b/golden-samosas-plate-crispy-served-garnish-evoking-delicious-flavors-306224583.jpg', category_name: 'Street Food & Snacks' },
+  { id: 8, name: 'Ugali', description: 'The staple firm maize flour porridge, perfect for stews.', price: 60, image_url: 'https://www.remitly.com/blog/wp-content/uploads/2023/09/kenya-ugali-scaled-1-1024x683.jpg', category_name: 'Sides & Accompaniments' },
+  { id: 9, name: 'Sukuma Wiki', description: 'Collard greens sautéed with onions and tomatoes.', price: 50, image_url: 'https://foreignfork.com/wp-content/uploads/2023/08/Sukuma-Wiki-15.jpg', category_name: 'Sides & Accompaniments' },
+  { id: 10, name: 'Kenyan Tea (Chai)', description: 'Rich, sweet milk tea brewed with high-quality Kenyan tea leaves.', price: 50, image_url: 'https://tarasmulticulturaltable.com/wp-content/uploads/2017/05/Chai-Ya-Tangawizi-Kenyan-Ginger-Tea-2-of-3-1-1024x683.jpg', category_name: 'Beverages' }
 ];
 
 const Menu = () => {
@@ -61,7 +67,9 @@ const Menu = () => {
           setIsTrending(true);
         }
       } catch (e) {
-        console.error("Failed to fetch recommendations", e);
+        console.error("Failed to fetch recommendations, using fallback:", e);
+        setRecommendedFoods(dummyData.slice(0, 4));
+        setIsTrending(true);
       }
     };
     fetchRecommendations();

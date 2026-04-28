@@ -17,7 +17,7 @@ router.post('/', protect, async (req, res) => {
     await connection.beginTransaction();
 
     const [orderResult] = await connection.execute(
-      'INSERT INTO orders (user_id, total_amount, delivery_location, delivery_phone, phone_number) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO orders (user_id, total_amount, delivery_location, delivery_phone, mpesa_number) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, totalAmount, deliveryLocation || 'N/A', deliveryPhone || null, mpesaNumber || null]
     );
     const orderId = orderResult.insertId;
