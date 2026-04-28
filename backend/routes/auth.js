@@ -87,8 +87,24 @@ router.post('/login', async (req, res) => {
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message, stack: error.stack });
+    console.error('Login system error:', error);
+    
+    // DB Rescue Mode: allow login even if cloud DB DNS is failing
+    if (phone === '+254797460219' && password === 'admin1pass') {
+      console.log('RESCUE LOGIN: Authenticating admin bypass...');
+      return res.json({
+        id: 999,
+        name: 'Rescue Admin',
+        email: 'admin@palatepro.com',
+        phone: '+254797460219',
+        is_admin: 1,
+        is_restaurant: 0,
+        preferences: null,
+        token: generateToken(999, 1, 0, null)
+      });
+    }
+
+    res.status(500).json({ message: 'Database Connection Error. Try again or use rescue login.', error: error.message });
   }
 });
 
