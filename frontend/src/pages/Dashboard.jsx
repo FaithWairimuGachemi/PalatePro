@@ -48,6 +48,13 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
     
+    // Attempt to load cached orders from localStorage first for instant UI
+    const cacheKey = `orders_${user.id}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      setOrders(JSON.parse(cached));
+    }
+
     if (user.is_restaurant) {
       fetchProviderOrders();
       fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/foods/provider`, {
@@ -72,14 +79,20 @@ const Dashboard = () => {
       })
       .then(data => {
         setOrders(data);
+        localStorage.setItem(cacheKey, JSON.stringify(data)); // Save to cache
         setLoading(false);
       })
       .catch(err => {
-        console.warn('Backend unavailable, using mock orders:', err);
-        setOrders([
-          { id: 101, total_amount: 450, status: 'PREPARING', created_at: new Date().toISOString() },
-          { id: 102, total_amount: 200, status: 'DELIVERED', created_at: new Date(Date.now() - 86400000).toISOString() }
-        ]);
+        console.warn('Backend unavailable, trying cache or mocks:', err);
+        const cachedOrders = localStorage.getItem(cacheKey);
+        if (cachedOrders) {
+          setOrders(JSON.parse(cachedOrders));
+        } else {
+          setOrders([
+            { id: 101, total_amount: 450, status: 'PREPARING', created_at: new Date().toISOString() },
+            { id: 102, total_amount: 200, status: 'DELIVERED', created_at: new Date(Date.now() - 86400000).toISOString() }
+          ]);
+        }
         setLoading(false);
       });
     }
