@@ -1,10 +1,10 @@
-# 🍽️ PalatePro - Taste the Magic
+# PalatePro - Taste the Magic
 
 PalatePro is a premium full-stack food delivery application designed to offer a seamless culinary experience. From authentic Kenyan delicacies to a state-of-the-art admin command center, PalatePro redefines how food is ordered, paid for, and delivered.
 
 ---
 
-## 🚀 Vision
+## Vision
 To bridge the gap between world-class culinary art and the convenience of modern technology, starting with the vibrant flavors of Kenya.
 
 ---
