@@ -16,19 +16,32 @@ async function updateDB() {
   try {
     console.log('Connected to Aiven MySQL...');
 
-    // 1. Ensure categories exist with exact IDs
-    console.log('Inserting categories...');
-    await connection.execute("INSERT IGNORE INTO categories (id, name, description) VALUES (1, 'Main Courses', 'Hearty traditional and modern Kenyan main dishes')");
-    await connection.execute("INSERT IGNORE INTO categories (id, name, description) VALUES (2, 'Street Food & Snacks', 'Quick, authentic bites found on the streets of Nairobi')");
-    await connection.execute("INSERT IGNORE INTO categories (id, name, description) VALUES (3, 'Sides & Accompaniments', 'Essential additions to any Kenyan meal')");
-    await connection.execute("INSERT IGNORE INTO categories (id, name, description) VALUES (4, 'Beverages', 'Refreshing drinks and traditional brews')");
+    // Disable foreign key checks to allow clearing tables
+    await connection.execute('SET FOREIGN_KEY_CHECKS = 0');
 
-    // 2. Clear old foods
-    console.log('Clearing old foods to overwrite with user images...');
-    await connection.execute("DELETE FROM order_items");
-    await connection.execute("DELETE FROM foods");
+    // 1. Clear existing data
+    console.log('Clearing old data...');
+    await connection.execute("TRUNCATE TABLE order_items");
+    await connection.execute("TRUNCATE TABLE foods");
+    await connection.execute("TRUNCATE TABLE categories");
 
-    // 3. Insert fresh foods with YOUR manually chosen high-quality image URLs
+    // 2. Insert categories with EXACT IDs
+    console.log('Seeding categories...');
+    const categories = [
+      [1, 'Main Courses', 'Hearty traditional and modern Kenyan main dishes'],
+      [2, 'Street Food & Snacks', 'Quick, authentic bites found on the streets of Nairobi'],
+      [3, 'Sides & Accompaniments', 'Essential additions to any Kenyan meal'],
+      [4, 'Beverages', 'Refreshing drinks and traditional brews']
+    ];
+
+    for (const cat of categories) {
+      await connection.execute(
+        "INSERT INTO categories (id, name, description) VALUES (?, ?, ?)",
+        cat
+      );
+    }
+
+    // 3. Insert fresh foods
     console.log('Inserting fresh food items with user-approved images...');
     const foods = [
       ['Nyama Choma', 'Roasted goat meat, a quintessential Kenyan delicacy.', 350, 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg', 1],
@@ -64,16 +77,18 @@ async function updateDB() {
     ];
 
     for (const food of foods) {
-      // Note: We don't specify restaurant_id here so they show up as official PalatePro items
       await connection.execute(
         "INSERT INTO foods (name, description, price, image_url, category_id, is_available) VALUES (?, ?, ?, ?, ?, 1)",
         food
       );
     }
 
-    console.log('Database successfully re-seeded with your manually uploaded images and 4 categories!');
+    // Re-enable foreign key checks
+    await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
+
+    console.log('Database successfully re-seeded and categories fixed!');
   } catch (err) {
-    console.error('Error:', err);
+    console.error('Error during database update:', err);
   } finally {
     await connection.end();
   }

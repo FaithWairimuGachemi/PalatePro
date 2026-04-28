@@ -2,17 +2,11 @@ const nodemailer = require('nodemailer');
 
 const sendReceiptEmail = async (email, orderDetails) => {
   try {
-    // We create a test account since we don't have real SMTP credentials.
-    // Ethereal is a fake SMTP service perfect for testing.
-    let testAccount = await nodemailer.createTestAccount();
-
     const transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false, 
+      service: 'gmail',
       auth: {
-        user: testAccount.user, 
-        pass: testAccount.pass, 
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
 

@@ -53,7 +53,11 @@ const Login = () => {
       }
 
       login(data);
-      navigate('/dashboard');
+      if (data.is_admin) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       console.error('Authentication Error:', err);
       setError(err.message || 'Something went wrong. Please try again.');

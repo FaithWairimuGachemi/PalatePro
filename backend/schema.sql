@@ -58,9 +58,11 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 
 -- Insert optional starter categories & dummy food (Only if not existing)
+-- Insert optional starter categories
 INSERT IGNORE INTO categories (id, name, description) VALUES 
-(1, 'Burgers', 'Delicious all-beef burgers'),
-(2, 'Pizzas', 'Freshly baked pizzas'),
-(3, 'Drinks', 'Refreshing beverages');
+(1, 'Main Courses', 'Hearty traditional and modern Kenyan main dishes'),
+(2, 'Street Food & Snacks', 'Quick, authentic bites found on the streets of Nairobi'),
+(3, 'Sides & Accompaniments', 'Essential additions to any Kenyan meal'),
+(4, 'Beverages', 'Refreshing drinks and traditional brews');
 
 -- Insert default admin: admin@palatepro.com / adminpass (password hash generated later, testing initially with simple app flow)
