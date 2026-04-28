@@ -58,44 +58,57 @@ async function getPool() {
   // 3. JSON Persistence Fallback (Safety net - Solves connectivity issues permanently)
   return {
     execute: async (sql, params) => {
-      sql = sql.toLowerCase();
-      if (sql.includes('select * from users where phone = ?')) {
+      const sqlLower = sql.toLowerCase();
+      
+      // LOGIN CHECK
+      if (sqlLower.includes('select * from users where phone = ?')) {
         const users = readJson('users');
         const user = users.find(u => u.phone === params[0]);
         return [user ? [user] : []];
       }
-      if (sql.includes('insert into users')) {
+      
+      // REGISTRATION
+      if (sqlLower.includes('insert into users')) {
         const users = readJson('users');
         const newUser = { id: Date.now(), name: params[0], email: params[1], phone: params[2], password_hash: params[3], is_restaurant: params[4], preferences: params[5], is_admin: 0 };
         users.push(newUser);
         writeJson('users', users);
         return [{ insertId: newUser.id }];
       }
-      if (sql.includes('insert into orders')) {
+
+      // ORDER PLACEMENT
+      if (sqlLower.includes('insert into orders')) {
         const orders = readJson('orders');
         const newOrder = { id: Date.now(), user_id: params[0], total_amount: params[1], status: 'PENDING', delivery_location: params[2], delivery_phone: params[3], created_at: new Date().toISOString() };
-        orders.push(newUser);
+        orders.push(newOrder); // FIXED: was pushing newUser
         writeJson('orders', orders);
         return [{ insertId: newOrder.id }];
       }
-      if (sql.includes('select * from orders where user_id = ?')) {
+
+      // MY ORDERS
+      if (sqlLower.includes('select * from orders where user_id = ?')) {
         const orders = readJson('orders');
         return [orders.filter(o => o.user_id === params[0])];
       }
-      if (sql.includes('select * from foods')) {
+
+      // MENU ITEMS
+      if (sqlLower.includes('select * from foods')) {
           return [[
-            { id: 1, name: 'Nyama Choma', price: 350, description: 'Roasted goat meat', image_url: '...' },
-            { id: 2, name: 'Pilau', price: 250, description: 'Spiced rice', image_url: '...' }
+            { id: 1, name: 'Nyama Choma', price: 350, description: 'Roasted goat meat', image_url: 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg' },
+            { id: 2, name: 'Pilau', price: 250, description: 'Spiced rice', image_url: 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png' }
           ]];
       }
       return [[]];
     },
     query: async (sql, params) => {
-        // Handle queries similarly
-        if (sql.toLowerCase().includes('select * from users')) return [readJson('users')];
-        return [[]];
+        // Reuse execute for queries in mock mode
+        return dbProxy.execute(sql, params);
     },
-    getConnection: async () => ({ execute: async () => [[]], query: async () => [[]], release: () => {} })
+    getConnection: async () => ({ 
+      execute: async (...a) => dbProxy.execute(...a), 
+      query: async (...a) => dbProxy.execute(...a), 
+      release: () => {} 
+    })
   };
 }
 
