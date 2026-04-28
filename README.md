@@ -34,6 +34,9 @@ To bridge the gap between world-class culinary art and the convenience of modern
 <img width="714" height="1599" alt="d1a17702-0774-4619-966d-5be63a3db9ed" src="https://github.com/user-attachments/assets/f9537a52-e0f2-4964-aa9d-225250a7d125" />
 <img width="714" height="1599" alt="beb8a01c-e833-4278-aed3-f75a7dbdfcaf" src="https://github.com/user-attachments/assets/ab3819d0-d552-474c-928d-6b4ec7640fe5" />
 
+### 🤖 PalatePro AI Assistant
+> **[Screenshot Needed: The floating AI chat window giving a personalized recommendation like "Since you love spicy food, I recommend the Pilau!"]**
+
 ### 📊 Admin Console
 
 <img width="962" height="925" alt="image" src="https://github.com/user-attachments/assets/11bdc517-9cce-4086-a1b0-8a18d95bb140" />
@@ -53,6 +56,11 @@ To bridge the gap between world-class culinary art and the convenience of modern
 ### 🍱 Authentic Kenyan Menu
 *   **Curated Selection:** 30+ professionally photographed and described Kenyan dishes.
 *   **Smart Fallbacks:** A resilient data layer that ensures the menu is always visible, even during database maintenance.
+
+### 🤖 PalatePro AI Assistant
+*   **Personalized Recommendations:** Powered by Google Gemini, the AI analyzes your food preferences and past ordering patterns to suggest the perfect meal.
+*   **Menu Awareness:** The assistant only recommends items that are currently in stock and available on the menu.
+*   **Interactive Chat:** A sleek floating assistant available on every page to answer your culinary questions.
 
 ### 🛠️ Admin Command Center
 *   **Real-time Analytics:** Track sales, popular items, and customer trends.

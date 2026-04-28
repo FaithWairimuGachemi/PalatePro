@@ -64,7 +64,7 @@ router.post('/', protect, async (req, res) => {
     `;
 
     // 5. Query Gemini Model
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction });
     
     const result = await model.generateContent(message);
     const textResponse = result.response.text();
