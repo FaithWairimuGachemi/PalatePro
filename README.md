@@ -10,21 +10,35 @@ To bridge the gap between world-class culinary art and the convenience of modern
 ---
 
 ## 📸 Project Gallery
-*(Screenshots to be added)*
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_03_20" src="https://github.com/user-attachments/assets/04bfe8be-8c8b-4dd0-b347-7ba2ea6ad4ab" />
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_03_50" src="https://github.com/user-attachments/assets/86544efc-c049-4e81-8be8-67935736575c" />
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_39" src="https://github.com/user-attachments/assets/4d1af692-338c-4a96-aebb-47e274dde040" />
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_46" src="https://github.com/user-attachments/assets/2e92cd1b-8e37-44e8-bb5a-63ef07ea0713" />
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_01_43" src="https://github.com/user-attachments/assets/fa91d90b-ade4-4f3b-9721-666acf680ceb" />
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_04_13" src="https://github.com/user-attachments/assets/1463fa1a-133d-4e8e-8dd5-95cf5e098d16" />
+
 
 ### 🏠 Landing Page
-> **[Screenshot Needed: The Hero section with the floating PalatePro burger and the "Taste the Magic" title]**
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_01_43" src="https://github.com/user-attachments/assets/f0f5918f-3dfc-4d28-85c7-42e26acf712a" />
+> <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_09" src="https://github.com/user-attachments/assets/4ed03295-dbf2-4507-bb24-ac449f2f9432" />
+
+
 
 ### 🍕 The Menu
-> **[Screenshot Needed: The categorized menu showing Pilau, Nyama Choma, and the "Recommended for You" section]**
+> <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_39" src="https://github.com/user-attachments/assets/5f2eedab-6d62-404c-9c64-7deb5cefd0d5" />
+<img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_58" src="https://github.com/user-attachments/assets/87dc53b1-6105-4e0c-9be8-055efc7ffeec" />
+
 
 ### 📱 Mobile Experience
-> **[Screenshot Needed: The PalatePro application running on an Android or iOS device]**
+>> <img width="714" height="1599" alt="ba7054c5-0856-428e-8434-8de3e83768e4" src="https://github.com/user-attachments/assets/7aa1236f-63aa-47ee-997b-7698e757fd26" />
+<img width="714" height="1599" alt="d1a17702-0774-4619-966d-5be63a3db9ed" src="https://github.com/user-attachments/assets/f9537a52-e0f2-4964-aa9d-225250a7d125" />
+<img width="714" height="1599" alt="beb8a01c-e833-4278-aed3-f75a7dbdfcaf" src="https://github.com/user-attachments/assets/ab3819d0-d552-474c-928d-6b4ec7640fe5" />
 
 ### 📊 Admin Console
-> **[Screenshot Needed: The Sales Overview dashboard with real-time transaction reports and M-Pesa codes]**
 
----
+<img width="962" height="925" alt="image" src="https://github.com/user-attachments/assets/11bdc517-9cce-4086-a1b0-8a18d95bb140" />
+
+
 
 ## ✨ Features
 
