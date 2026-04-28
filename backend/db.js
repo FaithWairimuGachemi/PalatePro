@@ -17,35 +17,46 @@ const writeJson = (file, data) => fs.writeFileSync(JSON_FILES[file], JSON.string
 
 // Define the mock implementation outside to avoid circular references
 const mockDb = {
-    execute: async (sql, params) => {
+    execute: async (sql, params = []) => {
       const sqlLower = sql.toLowerCase();
-      if (sqlLower.includes('select * from users where phone = ?')) {
+      console.log(`[OFFLINE MODE] Executing: ${sqlLower.substring(0, 60)}...`);
+
+      // LOGIN CHECK
+      if (/select \* from users where phone =/i.test(sqlLower)) {
         const users = readJson('users');
         const user = users.find(u => u.phone === params[0]);
         return [user ? [user] : []];
       }
-      if (sqlLower.includes('insert into users')) {
+      
+      // REGISTRATION
+      if (/insert into users/i.test(sqlLower)) {
         const users = readJson('users');
         const newUser = { id: Date.now(), name: params[0], email: params[1], phone: params[2], password_hash: params[3], is_restaurant: params[4], preferences: params[5], is_admin: 0 };
         users.push(newUser);
         writeJson('users', users);
         return [{ insertId: newUser.id }];
       }
-      if (sqlLower.includes('insert into orders')) {
+
+      // ORDER PLACEMENT
+      if (/insert into orders/i.test(sqlLower)) {
         const orders = readJson('orders');
-        const newOrder = { id: Date.now(), user_id: params[0], total_amount: params[1], status: 'PENDING', delivery_location: params[2], delivery_phone: params[3], created_at: new Date().toISOString() };
+        const newOrder = { id: Date.now(), user_id: params[0], total_amount: params[1], status: 'PENDING', delivery_location: params[2], delivery_phone: params[3], mpesa_code: params[4], receipt_number: params[5], created_at: new Date().toISOString() };
         orders.push(newOrder);
         writeJson('orders', orders);
         return [{ insertId: newOrder.id }];
       }
-      if (sqlLower.includes('select * from orders where user_id = ?')) {
+
+      // MY ORDERS
+      if (/select \* from orders where user_id =/i.test(sqlLower)) {
         const orders = readJson('orders');
         return [orders.filter(o => o.user_id === params[0])];
       }
-      if (sqlLower.includes('select * from foods')) {
+
+      // MENU ITEMS
+      if (/select \* from (foods|categories)/i.test(sqlLower)) {
           return [[
-            { id: 1, name: 'Nyama Choma', price: 350, description: 'Roasted goat meat', image_url: 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg' },
-            { id: 2, name: 'Pilau', price: 250, description: 'Spiced rice', image_url: 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png' }
+            { id: 1, name: 'Nyama Choma', price: 350, description: 'Roasted goat meat', image_url: 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg', category_id: 1 },
+            { id: 2, name: 'Pilau', price: 250, description: 'Spiced rice', image_url: 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png', category_id: 1 }
           ]];
       }
       return [[]];
