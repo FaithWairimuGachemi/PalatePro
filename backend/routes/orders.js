@@ -16,6 +16,11 @@ router.post('/', protect, async (req, res) => {
   try {
     await connection.beginTransaction();
 
+    const [userRows] = await connection.execute('SELECT id FROM users WHERE id = ?', [req.user.id]);
+    if (userRows.length === 0) {
+      throw new Error("Your account could not be found in the live database (you may be using an offline session). Please log out and register again.");
+    }
+
     const [orderResult] = await connection.execute(
       'INSERT INTO orders (user_id, total_amount, delivery_location, delivery_phone, mpesa_number) VALUES (?, ?, ?, ?, ?)',
       [req.user.id, totalAmount, deliveryLocation || 'N/A', deliveryPhone || null, mpesaNumber || null]
@@ -23,6 +28,11 @@ router.post('/', protect, async (req, res) => {
     const orderId = orderResult.insertId;
 
     for (const item of orderItems) {
+      const [rows] = await connection.execute('SELECT id FROM foods WHERE id = ?', [item.id]);
+      if (rows.length === 0) {
+        throw new Error(`The item "${item.name}" is no longer available or outdated. Please click 'Clear Cart' at the bottom of the page and re-add your items.`);
+      }
+
       await connection.execute(
         'INSERT INTO order_items (order_id, food_id, quantity, price) VALUES (?, ?, ?, ?)',
         [orderId, item.id, item.qty, item.price]
@@ -47,7 +57,8 @@ router.post('/', protect, async (req, res) => {
   } catch (error) {
     await connection.rollback();
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    const msg = error.message.includes('outdated') || error.message.includes('offline session') ? error.message : 'Server error';
+    res.status(500).json({ message: msg });
   } finally {
     connection.release();
   }
