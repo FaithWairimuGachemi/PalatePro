@@ -48,8 +48,8 @@ const Cart = () => {
       return;
     }
     
-    // Simulate user token if not properly authenticated for demo
-    const token = localStorage.getItem('token') || 'dummy_token';
+    // Use the actual token from the authenticated user
+    const token = user.token;
     
     setIsProcessing(true);
     try {
@@ -69,7 +69,7 @@ const Cart = () => {
       });
       
       const data = await response.json();
-      if (response.ok || response.status === 401) {
+      if (response.ok) {
         if (data.mpesaError) {
           setMpesaStatus(`Order Placed. ⚠️ ${data.mpesaError}`);
         } else {
