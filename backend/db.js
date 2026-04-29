@@ -52,11 +52,21 @@ const mockDb = {
         return [orders.filter(o => o.user_id === params[0])];
       }
 
-      // MENU ITEMS
-      if (/select \* from (foods|categories)/i.test(sqlLower)) {
+      // CATEGORIES
+      if (/select \* from categories/i.test(sqlLower)) {
           return [[
-            { id: 1, name: 'Nyama Choma', price: 350, description: 'Roasted goat meat', image_url: 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg', category_id: 1 },
-            { id: 2, name: 'Pilau', price: 250, description: 'Spiced rice', image_url: 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png', category_id: 1 }
+            { id: 1, name: 'Main Courses', description: 'Main dishes' },
+            { id: 2, name: 'Street Food & Snacks', description: 'Snacks' },
+            { id: 3, name: 'Sides & Accompaniments', description: 'Sides' },
+            { id: 4, name: 'Beverages', description: 'Drinks' }
+          ]];
+      }
+
+      // MENU ITEMS
+      if (/select .*from foods/i.test(sqlLower)) {
+          return [[
+            { id: 1, name: 'Nyama Choma', price: 350, description: 'Roasted goat meat', image_url: 'https://media-cdn.tripadvisor.com/media/photo-o/08/5a/46/70/maanzoni-lodge.jpg', category_id: 1, category_name: 'Main Courses' },
+            { id: 2, name: 'Pilau', price: 250, description: 'Spiced rice', image_url: 'https://toasterding.com/wp-content/uploads/2024/05/image-34.png', category_id: 1, category_name: 'Main Courses' }
           ]];
       }
       return [[]];
@@ -83,7 +93,7 @@ async function getPool() {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       ssl: { rejectUnauthorized: false },
-      connectTimeout: 2000 
+      connectTimeout: 10000 
     });
     const conn = await cloudPool.getConnection();
     conn.release();

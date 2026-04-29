@@ -9,9 +9,9 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost',      // Capacitor Android
   'capacitor://localhost', // Capacitor iOS
-  'http://10.22.3.228',
-  'http://10.22.3.228:5173',
-  'http://10.22.3.228:5000'
+  'http://10.69.57.228',
+  'http://10.69.57.228:5173',
+  'http://10.69.57.228:5000'
 ];
 app.use(cors({ 
   origin: true,
