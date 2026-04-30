@@ -80,29 +80,33 @@ const mockDb = {
 };
 
 let pool;
+let poolPromise = null;
 
 async function getPool() {
   if (pool) return pool;
+  if (poolPromise) return await poolPromise;
 
-  // 1. Try Cloud Aiven
-  try {
-    const cloudPool = mysql.createPool({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT || 3306,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      ssl: { rejectUnauthorized: false },
-      connectTimeout: 10000 
-    });
-    const conn = await cloudPool.getConnection();
-    conn.release();
-    console.log('✅ Connected to Cloud Database.');
-    pool = cloudPool;
-    return pool;
-  } catch (err) {
-    console.warn('❌ Cloud Database unreachable:', err.message);
-  }
+  poolPromise = (async () => {
+    // 1. Try Cloud Aiven
+    try {
+      const cloudPool = mysql.createPool({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 3306,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        ssl: { rejectUnauthorized: false },
+        connectTimeout: 10000,
+        connectionLimit: 5
+      });
+      const conn = await cloudPool.getConnection();
+      conn.release();
+      console.log('✅ Connected to Cloud Database.');
+      pool = cloudPool;
+      return pool;
+    } catch (err) {
+      console.warn('❌ Cloud Database unreachable:', err.message);
+    }
 
   // 2. Try Local MySQL (Fallback)
   try {
@@ -118,8 +122,11 @@ async function getPool() {
     console.warn('❌ Local Database unreachable. Switching to JSON PERSISTENCE mode.');
   }
 
-  pool = mockDb;
-  return pool;
+    pool = mockDb;
+    return pool;
+  })();
+  
+  return poolPromise;
 }
 
 const dbProxy = {
