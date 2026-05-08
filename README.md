@@ -9,7 +9,7 @@ To bridge the gap between world-class culinary art and the convenience of modern
 
 ---
 
-## 📸 Project Gallery
+##  Project Gallery
 <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_03_20" src="https://github.com/user-attachments/assets/04bfe8be-8c8b-4dd0-b347-7ba2ea6ad4ab" />
 <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_03_50" src="https://github.com/user-attachments/assets/86544efc-c049-4e81-8be8-67935736575c" />
 <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_39" src="https://github.com/user-attachments/assets/4d1af692-338c-4a96-aebb-47e274dde040" />
@@ -18,13 +18,13 @@ To bridge the gap between world-class culinary art and the convenience of modern
 <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_04_13" src="https://github.com/user-attachments/assets/1463fa1a-133d-4e8e-8dd5-95cf5e098d16" />
 
 
-### 🏠 Landing Page
+###  Landing Page
 <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_01_43" src="https://github.com/user-attachments/assets/f0f5918f-3dfc-4d28-85c7-42e26acf712a" />
 > <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_09" src="https://github.com/user-attachments/assets/4ed03295-dbf2-4507-bb24-ac449f2f9432" />
 
 
 
-### 🍕 The Menu
+###  The Menu
 > <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_39" src="https://github.com/user-attachments/assets/5f2eedab-6d62-404c-9c64-7deb5cefd0d5" />
 <img width="1920" height="1080" alt="Screenshot_2026-04-28_12_02_58" src="https://github.com/user-attachments/assets/87dc53b1-6105-4e0c-9be8-055efc7ffeec" />
 
@@ -37,39 +37,39 @@ To bridge the gap between world-class culinary art and the convenience of modern
 ### 🤖 PalatePro AI Assistant
 > **[Screenshot Needed: The floating AI chat window giving a personalized recommendation like "Since you love spicy food, I recommend the Pilau!"]**
 
-### 📊 Admin Console
+###  Admin Console
 
 <img width="962" height="925" alt="image" src="https://github.com/user-attachments/assets/11bdc517-9cce-4086-a1b0-8a18d95bb140" />
 
 
 
-## ✨ Features
+## Features
 
-### 🛒 Seamless Checkout
+### Seamless Checkout
 *   **M-Pesa Integration:** Fully automated STK Push payments using the Safaricom Daraja API.
 *   **Real-time Callbacks:** Automated order status updates (PENDING to PAID) upon successful transaction.
 
-### 📧 Automated receipting
+### Automated receipting
 *   **Professional HTML Receipts:** Instant receipt generation sent directly to the customer's email.
 *   **Nodemailer Integration:** Powered by Gmail SMTP for reliable delivery.
 
-### 🍱 Authentic Kenyan Menu
+### Authentic Kenyan Menu
 *   **Curated Selection:** 30+ professionally photographed and described Kenyan dishes.
 *   **Smart Fallbacks:** A resilient data layer that ensures the menu is always visible, even during database maintenance.
 
-### 🤖 PalatePro AI Assistant
+### PalatePro AI Assistant
 *   **Personalized Recommendations:** Powered by Google Gemini, the AI analyzes your food preferences and past ordering patterns to suggest the perfect meal.
 *   **Menu Awareness:** The assistant only recommends items that are currently in stock and available on the menu.
 *   **Interactive Chat:** A sleek floating assistant available on every page to answer your culinary questions.
 
-### 🛠️ Admin Command Center
+###  Admin Command Center
 *   **Real-time Analytics:** Track sales, popular items, and customer trends.
 *   **Order Management:** Process and track order statuses from "Paid" to "Delivered".
 *   **Rescue Access:** A failsafe login system for 24/7 administrative control.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technology |
 | :--- | :--- |
@@ -82,7 +82,7 @@ To bridge the gap between world-class culinary art and the convenience of modern
 
 ---
 
-## ⚙️ Setup & Installation
+##  Setup & Installation
 
 ### 1. Prerequisites
 *   Node.js (v18 or higher)
@@ -126,17 +126,17 @@ npm run dev
 
 ---
 
-## 👨‍💻 Admin Credentials
+## Admin Credentials
 To access the reporting dashboard:
 *   **Phone:** `+254797460219`
 *   **Password:** `admin1pass`
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 Built with ❤️ by the PalatePro Team. 
 
 ---
 
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## License
+This project is licensed under the MIT License.
